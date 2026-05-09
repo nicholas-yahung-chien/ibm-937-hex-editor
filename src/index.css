@@ -201,30 +201,45 @@ html, body, #root {
   flex-shrink: 0;
 }
 
-/* Bytes arranged horizontally; each byte is a vertical column (high on top, low below) */
-.hex-bytes {
-  display: flex;
-  gap: 6px;
+/*
+ * CSS Grid per hex row: row 1 = UTF-8 preview, row 2 = high nibbles, row 3 = low nibbles.
+ * grid-template-columns is set inline (repeat(N, 1ch)) to match the byte count.
+ */
+.hex-bytes-grid {
+  display: grid;
+  column-gap: 6px;
 }
 
-.hex-byte-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
+/* ── Preview row (read-only decoded characters) ─────────── */
+.hex-preview {
+  grid-row: 1;
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.4;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+  color: var(--green-dim);
 }
+.hex-preview-sbcs    { color: var(--green); }
+.hex-preview-dbcs    { color: var(--green-bright); }
+.hex-preview-so,
+.hex-preview-si      { color: var(--red); font-size: 8px; }
+.hex-preview-invalid { color: var(--red); }
 
+/* ── Nibble rows ─────────────────────────────────────────── */
 .hex-nibble {
   display: block;
   width: 1ch;
   text-align: center;
   color: var(--green);
   line-height: 1.4;
+  cursor: pointer;
 }
 
-.hex-nibble:hover { color: var(--green-bright); }
-
-.hex-byte-active .hex-nibble { color: var(--green-bright); }
+.hex-nibble:hover    { color: var(--green-bright); }
+.hex-nibble-active   { color: var(--green-bright); }
 
 .nibble-cursor {
   background: var(--green-dim);
