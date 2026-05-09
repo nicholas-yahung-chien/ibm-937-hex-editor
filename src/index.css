@@ -337,9 +337,23 @@ html, body, #root {
 }
 
 .diag-count { padding: 2px 6px; border: 1px solid currentColor; }
+.diag-count-muted { opacity: 0.35; }
 .diag-error { color: var(--red); }
 .diag-warn  { color: var(--amber); }
 .diag-info  { color: var(--green-dim); }
+
+.diag-warn-toggle {
+  margin-left: 12px;
+  font-size: 10px;
+  font-weight: normal;
+  color: var(--amber);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.75;
+}
+.diag-warn-toggle:hover { opacity: 1; }
+.diag-warn-toggle input { cursor: pointer; accent-color: var(--amber); }
 
 .diag-empty {
   color: var(--green-dim);
