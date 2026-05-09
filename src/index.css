@@ -1,5 +1,22 @@
 /* IBM 3270 / ISPF terminal aesthetic */
 
+/*
+ * CJK fixed-pitch fallback — routes Traditional Chinese / CJK code points to
+ * system monospace fonts where each character occupies exactly 2 ASCII columns.
+ * MingLiU (Windows), Noto Sans Mono CJK TC (Linux), Source Han Mono TC (Mac).
+ */
+@font-face {
+  font-family: "TermCJK";
+  src: local("MingLiU"), local("MingLiU_HKSCS"),
+       local("Noto Sans Mono CJK TC"), local("Source Han Mono TC"),
+       local("AR PL UMing TW");
+  unicode-range:
+    U+2E80-2EFF, U+3000-303F, U+31C0-31EF,
+    U+3200-32FF, U+3300-33FF, U+3400-4DBF,
+    U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F,
+    U+FE30-FE4F, U+FF00-FFEF;
+}
+
 :root {
   --bg: #0a0a0a;
   --bg-panel: #111;
@@ -92,7 +109,7 @@ html, body, #root {
   background: #000;
   color: var(--green-bright);
   border: 1px solid var(--green-dim);
-  font-family: var(--font);
+  font-family: "IBM Plex Mono", "Cascadia Mono", "Consolas", "Courier New", "TermCJK", monospace;
   font-size: 14px;
   padding: 6px;
   resize: vertical;
