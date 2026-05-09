@@ -338,21 +338,26 @@ html, body, #root {
   font-size: 12px;
 }
 
+/*
+ * Fixed-column grid: all rows share identical column boundaries regardless of
+ * content width or background highlight, eliminating apparent indentation.
+ * Columns: position | hex | kind | char | message(fill)
+ */
 .diag-item {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 12ch 9ch 20ch 4ch 1fr;
+  column-gap: 6px;
   align-items: baseline;
-  padding: 3px 0;
+  padding: 3px 4px;
   border-bottom: 1px solid #1a1a1a;
   overflow: hidden;
 }
 
-.diag-item.diag-error { background: var(--red-bg); padding: 3px 4px; }
-.diag-item.diag-warn  { background: var(--yellow-bg); padding: 3px 4px; }
+.diag-item.diag-error { background: var(--red-bg); }
+.diag-item.diag-warn  { background: var(--yellow-bg); }
 
-.diag-pos  { flex-shrink: 0; min-width: 9ch; color: var(--green-dim); }
-.diag-hex  { flex-shrink: 0; min-width: 8ch; color: var(--amber); font-family: var(--font); }
-.diag-kind { flex-shrink: 0; font-weight: bold; min-width: 18ch; }
-.diag-char { flex-shrink: 0; color: var(--green-bright); min-width: 3ch; }
-.diag-msg  { color: var(--green-dim); font-size: 11px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.diag-pos  { color: var(--green-dim); overflow: hidden; }
+.diag-hex  { color: var(--amber); font-family: var(--font); overflow: hidden; }
+.diag-kind { font-weight: bold; overflow: hidden; }
+.diag-char { color: var(--green-bright); overflow: hidden; }
+.diag-msg  { color: var(--green-dim); font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
