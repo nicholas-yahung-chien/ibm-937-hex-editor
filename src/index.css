@@ -1,22 +1,5 @@
 /* IBM 3270 / ISPF terminal aesthetic */
 
-/*
- * CJK fixed-pitch fallback — routes Traditional Chinese / CJK code points to
- * system monospace fonts where each character occupies exactly 2 ASCII columns.
- * MingLiU (Windows), Noto Sans Mono CJK TC (Linux), Source Han Mono TC (Mac).
- */
-@font-face {
-  font-family: "TermCJK";
-  src: local("MingLiU"), local("MingLiU_HKSCS"),
-       local("Noto Sans Mono CJK TC"), local("Source Han Mono TC"),
-       local("AR PL UMing TW");
-  unicode-range:
-    U+2E80-2EFF, U+3000-303F, U+31C0-31EF,
-    U+3200-32FF, U+3300-33FF, U+3400-4DBF,
-    U+4E00-9FFF, U+F900-FAFF, U+FE10-FE1F,
-    U+FE30-FE4F, U+FF00-FFEF;
-}
-
 :root {
   --bg: #0a0a0a;
   --bg-panel: #111;
@@ -102,21 +85,68 @@ html, body, #root {
   padding-bottom: 4px;
 }
 
-/* ── UTF-8 Input Panel ──────────────────────────────────── */
+/* ── Monospace Text Input ───────────────────────────────── */
 
-.utf8-textarea {
-  width: 100%;
+/*
+ * Character widths are forced with CSS ch units so that CJK characters occupy
+ * exactly 2 ASCII columns regardless of which system font renders the glyphs.
+ * A hidden <textarea> captures keyboard/IME/clipboard; the <div> below renders.
+ */
+.mc-container {
+  position: relative;
   background: #000;
-  color: var(--green-bright);
   border: 1px solid var(--green-dim);
-  font-family: "IBM Plex Mono", "Cascadia Mono", "Consolas", "Courier New", "TermCJK", monospace;
-  font-size: 14px;
-  padding: 6px;
-  resize: vertical;
-  outline: none;
+  cursor: text;
 }
 
-.utf8-textarea:focus { border-color: var(--green); }
+.mc-container.mc-focused { border-color: var(--green); }
+
+.mc-display {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--green-bright);
+  padding: 6px;
+  min-height: calc(6 * 1.6em + 12px);
+  line-height: 1.6;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.mc-line { min-height: 1.6em; }
+
+.mc-char {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.mc-narrow { width: 1ch; }
+
+/* CJK glyph is centered within the 2-column box */
+.mc-wide { width: 2ch; text-align: center; }
+
+.mc-placeholder { color: var(--green-dim); }
+
+.mc-capture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  resize: none;
+  border: none;
+  outline: none;
+  cursor: text;
+  font-family: var(--font);
+  font-size: 14px;
+  padding: 6px;
+  background: transparent;
+  color: transparent;
+}
+
+/* ── UTF-8 Input Panel ──────────────────────────────────── */
 
 .convert-btn {
   margin-top: 8px;
