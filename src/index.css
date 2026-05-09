@@ -150,32 +150,34 @@ html, body, #root {
 
 .hex-offset {
   color: var(--green-dim);
-  min-width: 4ch;
+  min-width: 5ch;
   flex-shrink: 0;
 }
 
-.hex-nibble-row {
+/* Bytes arranged horizontally; each byte is a vertical column (high on top, low below) */
+.hex-bytes {
   display: flex;
-  gap: 4px;
-  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.hex-byte-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 }
 
 .hex-nibble {
-  display: inline-block;
+  display: block;
   width: 1ch;
   text-align: center;
   color: var(--green);
-  cursor: pointer;
+  line-height: 1.4;
 }
 
 .hex-nibble:hover { color: var(--green-bright); }
 
-/* Group nibbles by byte: pair them visually */
-.nibble-high { margin-right: 1px; }
-.nibble-low  { margin-right: 5px; }
-.nibble-low:last-child { margin-right: 0; }
-
-.hex-byte-active { color: var(--green-bright); }
+.hex-byte-active .hex-nibble { color: var(--green-bright); }
 
 .nibble-cursor {
   background: var(--green-dim);

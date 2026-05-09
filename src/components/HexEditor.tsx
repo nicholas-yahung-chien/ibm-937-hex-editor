@@ -135,53 +135,30 @@ export default function HexEditor({ cells, onChange }: Props) {
               {rowStart.toString(16).toUpperCase().padStart(4, '0')}
             </span>
 
-            {/* Upper nibbles */}
-            <span className="hex-nibble-row">
+            {/* Each byte is a vertical column: high nibble on top, low nibble below */}
+            <div className="hex-bytes">
               {row.map((cell, colIdx) => {
                 const absIdx = rowStart + colIdx;
                 const isActive = cursor.byteIndex === absIdx;
-                const highActive = isActive && cursor.nibble === 'high';
+                const bg = cellBg(cell);
                 return (
-                  <span
-                    key={colIdx}
-                    className={[
-                      'hex-nibble',
-                      'nibble-high',
-                      isActive ? 'hex-byte-active' : '',
-                      highActive ? 'nibble-cursor' : '',
-                      cellBg(cell),
-                    ].filter(Boolean).join(' ')}
-                    onClick={() => setCursor({ byteIndex: absIdx, nibble: 'high' })}
-                  >
-                    {((cell.value >> 4) & 0xF).toString(16).toUpperCase()}
-                  </span>
+                  <div key={colIdx} className={['hex-byte-col', isActive ? 'hex-byte-active' : '', bg].filter(Boolean).join(' ')}>
+                    <span
+                      className={['hex-nibble', 'nibble-high', isActive && cursor.nibble === 'high' ? 'nibble-cursor' : ''].filter(Boolean).join(' ')}
+                      onClick={() => setCursor({ byteIndex: absIdx, nibble: 'high' })}
+                    >
+                      {((cell.value >> 4) & 0xF).toString(16).toUpperCase()}
+                    </span>
+                    <span
+                      className={['hex-nibble', 'nibble-low', isActive && cursor.nibble === 'low' ? 'nibble-cursor' : ''].filter(Boolean).join(' ')}
+                      onClick={() => setCursor({ byteIndex: absIdx, nibble: 'low' })}
+                    >
+                      {(cell.value & 0xF).toString(16).toUpperCase()}
+                    </span>
+                  </div>
                 );
               })}
-            </span>
-
-            {/* Lower nibbles */}
-            <span className="hex-nibble-row">
-              {row.map((cell, colIdx) => {
-                const absIdx = rowStart + colIdx;
-                const isActive = cursor.byteIndex === absIdx;
-                const lowActive = isActive && cursor.nibble === 'low';
-                return (
-                  <span
-                    key={colIdx}
-                    className={[
-                      'hex-nibble',
-                      'nibble-low',
-                      isActive ? 'hex-byte-active' : '',
-                      lowActive ? 'nibble-cursor' : '',
-                      cellBg(cell),
-                    ].filter(Boolean).join(' ')}
-                    onClick={() => setCursor({ byteIndex: absIdx, nibble: 'low' })}
-                  >
-                    {(cell.value & 0xF).toString(16).toUpperCase()}
-                  </span>
-                );
-              })}
-            </span>
+            </div>
           </div>
         );
       })}
