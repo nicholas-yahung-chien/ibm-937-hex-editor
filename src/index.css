@@ -235,6 +235,14 @@ html, body, #root {
 .cell-error { background: var(--red-bg); color: var(--red) !important; }
 .cell-warn  { background: var(--yellow-bg); color: var(--amber) !important; }
 
+.hex-line-group { }
+
+.hex-line-sep {
+  height: 6px;
+  border-top: 1px dashed var(--border);
+  margin: 3px 0;
+}
+
 .hex-legend {
   margin-top: 8px;
   font-size: 10px;
@@ -251,6 +259,8 @@ html, body, #root {
   word-break: break-all;
   padding: 4px 0;
 }
+
+.preview-line { display: block; min-height: 2em; }
 
 .preview-empty {
   color: var(--green-dim);

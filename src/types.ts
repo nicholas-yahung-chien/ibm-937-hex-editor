@@ -3,6 +3,7 @@ import type { DiagnosticKind } from './inspector/inspect937';
 export interface ByteCell {
   value: number;
   diagnostic?: DiagnosticKind;
+  lineStart?: boolean;
 }
 
 export interface CursorPos {

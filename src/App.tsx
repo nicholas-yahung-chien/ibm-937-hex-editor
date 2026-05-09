@@ -39,8 +39,7 @@ export default function App() {
   }, [runInspection]);
 
   const handleCellsChange = useCallback((newCells: ByteCell[]) => {
-    // Strip diagnostic annotations before re-inspecting
-    const raw = newCells.map(c => ({ value: c.value }));
+    const raw = newCells.map(c => ({ value: c.value, lineStart: c.lineStart }));
     runInspection(raw);
   }, [runInspection]);
 

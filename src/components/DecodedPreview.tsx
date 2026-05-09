@@ -66,16 +66,25 @@ export default function DecodedPreview({ cells }: Props) {
     );
   }
 
-  const segments = buildSegments(cells);
+  // Split cells into input-line groups based on lineStart markers
+  const lineGroups: ByteCell[][] = [];
+  cells.forEach((cell, i) => {
+    if (i === 0 || cell.lineStart) lineGroups.push([]);
+    lineGroups[lineGroups.length - 1].push(cell);
+  });
 
   return (
     <div className="panel preview-panel">
       <div className="panel-title">UTF-8 Preview</div>
       <div className="preview-content">
-        {segments.map((seg, i) => (
-          <span key={i} className={`seg-${seg.kind}`} title={seg.kind}>
-            {seg.text}
-          </span>
+        {lineGroups.map((group, gIdx) => (
+          <div key={gIdx} className="preview-line">
+            {buildSegments(group).map((seg, i) => (
+              <span key={i} className={`seg-${seg.kind}`} title={seg.kind}>
+                {seg.text}
+              </span>
+            ))}
+          </div>
         ))}
       </div>
       <div className="preview-legend">

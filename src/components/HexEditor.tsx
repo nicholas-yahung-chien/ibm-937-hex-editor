@@ -111,10 +111,36 @@ export default function HexEditor({ cells, onChange }: Props) {
     }
   }, [moveCursor, deleteByte, insertByte, inputNibble]);
 
-  const rows: ByteCell[][] = [];
-  for (let r = 0; r < cells.length; r += BYTES_PER_ROW) {
-    rows.push(cells.slice(r, r + BYTES_PER_ROW));
-  }
+  // Split cells into input-line groups based on lineStart markers
+  interface LineGroup { startOffset: number; cells: ByteCell[]; }
+  const groups: LineGroup[] = [];
+  cells.forEach((cell, i) => {
+    if (i === 0 || cell.lineStart) {
+      groups.push({ startOffset: i, cells: [] });
+    }
+    groups[groups.length - 1].cells.push(cell);
+  });
+
+  const renderByteCol = (cell: ByteCell, absIdx: number) => {
+    const isActive = cursor.byteIndex === absIdx;
+    const bg = cellBg(cell);
+    return (
+      <div key={absIdx} className={['hex-byte-col', isActive ? 'hex-byte-active' : '', bg].filter(Boolean).join(' ')}>
+        <span
+          className={['hex-nibble', 'nibble-high', isActive && cursor.nibble === 'high' ? 'nibble-cursor' : ''].filter(Boolean).join(' ')}
+          onClick={() => setCursor({ byteIndex: absIdx, nibble: 'high' })}
+        >
+          {((cell.value >> 4) & 0xF).toString(16).toUpperCase()}
+        </span>
+        <span
+          className={['hex-nibble', 'nibble-low', isActive && cursor.nibble === 'low' ? 'nibble-cursor' : ''].filter(Boolean).join(' ')}
+          onClick={() => setCursor({ byteIndex: absIdx, nibble: 'low' })}
+        >
+          {(cell.value & 0xF).toString(16).toUpperCase()}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -127,38 +153,27 @@ export default function HexEditor({ cells, onChange }: Props) {
       {cells.length === 0 && (
         <div className="hex-empty">Enter text above and click "Convert" to load bytes.</div>
       )}
-      {rows.map((row, rowIdx) => {
-        const rowStart = rowIdx * BYTES_PER_ROW;
+      {groups.map((group, gIdx) => {
+        const rows: ByteCell[][] = [];
+        for (let r = 0; r < Math.max(group.cells.length, 1); r += BYTES_PER_ROW) {
+          rows.push(group.cells.slice(r, r + BYTES_PER_ROW));
+        }
         return (
-          <div key={rowIdx} className="hex-row">
-            <span className="hex-offset">
-              {rowStart.toString(16).toUpperCase().padStart(4, '0')}
-            </span>
-
-            {/* Each byte is a vertical column: high nibble on top, low nibble below */}
-            <div className="hex-bytes">
-              {row.map((cell, colIdx) => {
-                const absIdx = rowStart + colIdx;
-                const isActive = cursor.byteIndex === absIdx;
-                const bg = cellBg(cell);
-                return (
-                  <div key={colIdx} className={['hex-byte-col', isActive ? 'hex-byte-active' : '', bg].filter(Boolean).join(' ')}>
-                    <span
-                      className={['hex-nibble', 'nibble-high', isActive && cursor.nibble === 'high' ? 'nibble-cursor' : ''].filter(Boolean).join(' ')}
-                      onClick={() => setCursor({ byteIndex: absIdx, nibble: 'high' })}
-                    >
-                      {((cell.value >> 4) & 0xF).toString(16).toUpperCase()}
-                    </span>
-                    <span
-                      className={['hex-nibble', 'nibble-low', isActive && cursor.nibble === 'low' ? 'nibble-cursor' : ''].filter(Boolean).join(' ')}
-                      onClick={() => setCursor({ byteIndex: absIdx, nibble: 'low' })}
-                    >
-                      {(cell.value & 0xF).toString(16).toUpperCase()}
-                    </span>
+          <div key={gIdx} className="hex-line-group">
+            {gIdx > 0 && <div className="hex-line-sep" />}
+            {rows.map((row, rowIdx) => {
+              const rowStart = group.startOffset + rowIdx * BYTES_PER_ROW;
+              return (
+                <div key={rowIdx} className="hex-row">
+                  <span className="hex-offset">
+                    {rowStart.toString(16).toUpperCase().padStart(4, '0')}
+                  </span>
+                  <div className="hex-bytes">
+                    {row.map((cell, colIdx) => renderByteCol(cell, rowStart + colIdx))}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         );
       })}

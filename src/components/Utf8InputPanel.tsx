@@ -11,8 +11,13 @@ export default function Utf8InputPanel({ onConvert }: Props) {
   const [text, setText] = useState('');
 
   const handleConvert = () => {
-    const bytes = encodeToIbm937(text);
-    const cells: ByteCell[] = Array.from(bytes).map(v => ({ value: v }));
+    const inputLines = text.split('\n');
+    const cells: ByteCell[] = [];
+    inputLines.forEach((line, lineIdx) => {
+      Array.from(encodeToIbm937(line)).forEach((v, byteIdx) => {
+        cells.push({ value: v, lineStart: lineIdx > 0 && byteIdx === 0 });
+      });
+    });
     onConvert(cells);
   };
 
