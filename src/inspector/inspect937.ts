@@ -37,6 +37,10 @@ export interface AnalysisResult {
  */
 function strongSbcsByte(b: number): boolean {
   if (b === SO || b === SI) return false;
+  // Bytes below the DBCS pair range (0x40-0xFE) can never be DBCS bytes.
+  // This covers all EBCDIC control characters including NL (0x15), LF (0x25), CR (0x0D).
+  if (b < 0x40) return true;
+  if (b === 0xFF) return true;
   if (b >= 0xF0 && b <= 0xF9) return true; // 0-9
   if (b >= 0xC1 && b <= 0xC9) return true; // A-I
   if (b >= 0xD1 && b <= 0xD9) return true; // J-R
